@@ -2,12 +2,19 @@ const tbody = document.getElementById("tbody")
 const filterInput = document.getElementById("filterInput")
 const allSortLinks = document.getElementsByClassName('bi') 
 const pager = document.getElementById('pager') 
+const pageNo = document.getElementById('pageNo') 
+
+pageNo.addEventListener("input",()=>{
+    currentPageNo = Number(pageNo.value)
+    refresh()
+})
+
 
 let  currentSortCol = ""
 let currentSortOrder = "" 
 let currentQ = ""
 let currentPageNo = 1
-let currentPageSize = 20
+let currentPageSize = 10
 
 
 Object.values(allSortLinks).forEach(link=>{
@@ -33,7 +40,7 @@ function debounce(cb, delay = 250) {
   const updateQuery = debounce(query => {
     currentQ = query
     refresh()
-  }, 1000)
+  }, 500)
 
 
 
@@ -80,7 +87,7 @@ function createTd(data){
 }
 
 async function refresh(){
-    //let offset = (currentPageNo - 1) * currentPageSize
+    let offset = (currentPageNo - 1) * currentPageSize
 
     //fetch!
     // let url = "http://localhost:3000/products?sortCol=" 
@@ -88,8 +95,8 @@ async function refresh(){
     //      "&q=" + currentQ + "&limit=" + currentPageSize+  "&offset=" + offset
 
     let url = "http://localhost:3000/products?sortCol=" 
-        + currentSortCol + "&sortOrder=" + currentSortOrder + "&limit=200"
-         + "&offset=0" 
+        + currentSortCol + "&sortOrder=" + currentSortOrder + "&limit=" + currentPageSize
+         + "&offset=" + offset + "&q=" + currentQ
     console.log(url)
 
 
@@ -102,7 +109,7 @@ async function refresh(){
     // // Totala antalet poster - count
      const products = await response.json()
      tbody.innerHTML = ""
-     products.forEach(prod=>{
+     products.result.forEach(prod=>{
         const tr = document.createElement("tr")
         tr.appendChild(createTd(prod.id))
         tr.appendChild(createTd(prod.name))
@@ -110,7 +117,8 @@ async function refresh(){
         tr.appendChild(createTd(prod.stockLevel))
         tbody.appendChild(tr)
     })
-    // createPager(products.total,currentPageNo,currentPageSize)
+    //alert(products.total)
+    createPager(products.total,currentPageNo,currentPageSize)
 
 
 
