@@ -80,22 +80,29 @@ function createTd(data){
 }
 
 async function refresh(){
-    let offset = (currentPageNo - 1) * currentPageSize
+    //let offset = (currentPageNo - 1) * currentPageSize
+
     //fetch!
+    // let url = "http://localhost:3000/products?sortCol=" 
+    //     + currentSortCol + "&sortOrder=" + currentSortOrder +
+    //      "&q=" + currentQ + "&limit=" + currentPageSize+  "&offset=" + offset
+
     let url = "http://localhost:3000/products?sortCol=" 
-        + currentSortCol + "&sortOrder=" + currentSortOrder +
-         "&q=" + currentQ + "&limit=" + currentPageSize+  "&offset=" + offset
+        + currentSortCol + "&sortOrder=" + currentSortOrder + "&limit=200"
+         + "&offset=0" 
+    console.log(url)
+
 
     const response = await fetch(url,{
         headers:{
             'Accept': 'application/json'
         }
     })
-    //Paging behöver vi 20 posterna för aktuell sida
-    // Totala antalet poster - count
-    const products = await response.json()
-    tbody.innerHTML = ""
-    products.result.forEach(prod=>{
+    // //Paging behöver vi 20 posterna för aktuell sida
+    // // Totala antalet poster - count
+     const products = await response.json()
+     tbody.innerHTML = ""
+     products.forEach(prod=>{
         const tr = document.createElement("tr")
         tr.appendChild(createTd(prod.id))
         tr.appendChild(createTd(prod.name))
@@ -103,7 +110,7 @@ async function refresh(){
         tr.appendChild(createTd(prod.stockLevel))
         tbody.appendChild(tr)
     })
-    createPager(products.total,currentPageNo,currentPageSize)
+    // createPager(products.total,currentPageNo,currentPageSize)
 
 
 
